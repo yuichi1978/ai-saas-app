@@ -1,0 +1,48 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+ 
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+// ユーザーモデル
+model User {
+  id                 String             @id @default(uuid())
+  clerkId            String             @unique
+  email              String             @unique
+  stripeCustomerId   String?            @unique
+  credits            Int                @default(5)
+  subscriptionStatus SubscriptionStatus @default(FREE)
+  subscriptions      Subscription?      // 1対1のリレーション
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@index([clerkId])
+  @@index([email])
+  @@index([stripeCustomerId])
+}
+
+// サブスクリプションモデル
+model Subscription {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId   String   @unique
+  stripePriceId          String
+  stripeCurrentPeriodEnd DateTime
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([userId])
+  @@index([stripeSubscriptionId])
+}
+
+// サブスクリプションのステータス列挙型
+enum SubscriptionStatus {
+  FREE
+  BASIC
+  PRO
+}
