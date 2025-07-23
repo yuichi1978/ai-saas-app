@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import AuthButton from "@/components/auth/AuthButton";
+import CreditDisplay from "@/components/dashboard/CreditDisplay";
 
 export default function DashboardNav() {
   const pathname = usePathname();
@@ -32,6 +33,10 @@ export default function DashboardNav() {
       </nav>
       <div className="my-4 px-4 md:hidden">
         <AuthButton />
+      </div>
+
+      <div className="p-4">
+        <CreditDisplay />
       </div>
     </>
   );
